@@ -1,9 +1,11 @@
+import Header from './presentation/components/HeaderComponent';
+
 
 function App() {
 
   return (
     <>
-      <h1>FilmoNation</h1>
+      <Header />
     </>
   )
 }

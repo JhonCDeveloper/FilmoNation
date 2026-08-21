@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  /* Superficies y texto */
+  --color-surface:        oklch(0.1930 0.0165 273.82); /* El antiguo --ink: Fondo más profundo */
+  --color-surface-raised: oklch(0.2419 0.0234 273.63); /* El antiguo --panel */
+  --color-panel:          oklch(0.2419 0.0234 273.63); /* Mantenido por compatibilidad */
+  --color-panel-2:        oklch(0.2705 0.0249 271.35 / 0.33); /* Panel con transparencia alfa */
+  
+  --color-ink:            oklch(0.9245 0.0096 93.57);  /* El antiguo --text: Lectura principal */
+  --color-ink-muted:      oklch(0.7054 0.0215 267.22); /* El antiguo --text-dim: Secundarios */
+  --color-line:           oklch(0.3202 0.0291 273.73); /* Bordes y separadores de interfaz */
+  
+  /* Identidad y Énfasis */
+  --color-parchment:      oklch(0.9261 0.0226 87.15);  /* Tono pergamino para UI especial */
+  --color-brand:          oklch(0.7280 0.1380 89.73);  /* El antiguo --gold como identidad */
+  --color-danger:         oklch(0.5253 0.1550 17.61);  /* El antiguo --crimson para errores */
+
+  /* Estados del catálogo: si mañana cambia el ámbar, se toca UNA línea */
+  --color-status-released:   oklch(0.7280 0.1380 89.73); /* Mapeado a tu color oro */
+  --color-status-unreleased: oklch(0.9261 0.0226 87.15); /* Mapeado a tu pergamino claro */
+  --color-status-unknown:    oklch(0.7054 0.0215 267.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
