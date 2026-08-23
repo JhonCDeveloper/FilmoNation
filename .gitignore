@@ -21,4 +21,18 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
+# Testing / Coverage
+coverage/
+*.lcov
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Vite & Build cache
+.vite/
+*.tsbuildinfo
+
+# OS / Temp
+Thumbs.db

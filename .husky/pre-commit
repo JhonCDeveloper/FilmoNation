@@ -1,0 +1,8 @@
+# 1. Chequeo de tipos estricto global (tsc no admite staged files aislados)
+pnpm tsc --noEmit
+
+# 2. Linter, formateo y reglas de arquitectura solo en archivos staged
+pnpm exec lint-staged
+
+# 3. Tests unitarios relacionados a los cambios staged
+pnpm vitest related --run
