@@ -27,9 +27,9 @@ export default defineConfig([
     },
   },
 
-  // 3. Reglas estrictas de TypeScript aplicadas exclusivamente a src/
+  // 3. Reglas estrictas de TypeScript aplicadas a src y archivos de configuración raíz
   {
-    files: ['src/**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}', '*.config.ts', '*.setup.ts'],
     extends: [tseslint.configs.strictTypeChecked, tseslint.configs.stylisticTypeChecked],
     languageOptions: {
       globals: globals.browser,
