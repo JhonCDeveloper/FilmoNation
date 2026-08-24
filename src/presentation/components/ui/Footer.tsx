@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-line-2 py-6 text-center mt-auto">
+    <footer className="w-full border-t border-line-2 py-6 text-center">
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex flex-col items-center justify-center gap-2 text-xs text-ink-muted sm:flex-row">
           <span>© 2026 FilmoNation.</span>
