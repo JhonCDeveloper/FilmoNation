@@ -9,7 +9,7 @@
  */
 import { useSearchParams } from 'react-router';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useDiscoverMovies } from '@/presentation/hooks/useMovies';
+import { useDiscoverMovies, useSearchMovies } from '@/presentation/hooks/useMovies';
 import { useMovieGenres } from '@/presentation/hooks/useMovies';
 import { AsyncBoundary } from '@/presentation/components/layout/async-boundary';
 import { MovieCard } from '@/presentation/components/ui/movie-card';
@@ -119,9 +119,31 @@ export default function TerritoryPage() {
 
   // Leer el query de búsqueda libre (viene del HeaderSearch vía /territorio?q=...)
   const textQuery = searchParams.get('q') ?? '';
+  const isSearchMode = textQuery.trim().length > 0;
 
-  const { data, isLoading, isError, error, refetch } = useDiscoverMovies(discoverParams);
+  const {
+    data: discoverData,
+    isLoading: isDiscoverLoading,
+    isError: isDiscoverError,
+    error: discoverError,
+    refetch: discoverRefetch,
+  } = useDiscoverMovies(discoverParams, !isSearchMode);
+
+  const {
+    data: searchData,
+    isLoading: isSearchLoading,
+    isError: isSearchError,
+    error: searchError,
+    refetch: searchRefetch,
+  } = useSearchMovies({ query: textQuery, page: discoverParams.page ?? 1 });
+
   const { data: genresData } = useMovieGenres();
+
+  const data = isSearchMode ? searchData : discoverData;
+  const isLoading = isSearchMode ? isSearchLoading : isDiscoverLoading;
+  const isError = isSearchMode ? isSearchError : isDiscoverError;
+  const error = isSearchMode ? searchError : discoverError;
+  const refetch = isSearchMode ? searchRefetch : discoverRefetch;
 
   const movies = data?.results ?? [];
   const totalPages = data?.total_pages ?? 1;

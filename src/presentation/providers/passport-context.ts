@@ -5,8 +5,10 @@ export interface PassportContextType {
   passport: UserPassportData;
   toggleStamp: (movieId: number) => void;
   toggleWatchlist: (movieId: number) => void;
+  toggleFavorite: (movieId: number) => void;
   isStamped: (movieId: number) => boolean;
   isWatchlisted: (movieId: number) => boolean;
+  isFavorite: (movieId: number) => boolean;
 }
 
 export const PassportContext = createContext<PassportContextType | null>(null);

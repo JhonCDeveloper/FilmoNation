@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { passportStorage, type UserPassportData } from '@/infrastructure/storage/passport-storage';
 import { PassportContext } from './passport-context';
+import { tmdbApi } from '@/infrastructure/api/tmdb-api';
 
 interface PassportProviderProps {
   children: ReactNode;
@@ -13,6 +14,32 @@ export function PassportProvider({ children }: PassportProviderProps) {
     passportStorage.savePassport(passport);
   }, [passport]);
 
+  // Heal missing metadata for previously stamped movies
+  useEffect(() => {
+    const missingMetadataIds = passport.stampedMovieIds.filter(
+      (id) => !passport.moviesMetadata[id],
+    );
+
+    if (missingMetadataIds.length > 0) {
+      missingMetadataIds.forEach((id) => {
+        tmdbApi
+          .getMovieDetails(id)
+          .then((details) => {
+            if (details.runtime) {
+              setPassport((prev) => ({
+                ...prev,
+                moviesMetadata: {
+                  ...prev.moviesMetadata,
+                  [id]: { runtime: details.runtime ?? 0 },
+                },
+              }));
+            }
+          })
+          .catch(console.error);
+      });
+    }
+  }, [passport.stampedMovieIds, passport.moviesMetadata]);
+
   const toggleStamp = useCallback((movieId: number) => {
     setPassport((prev) => {
       const exists = prev.stampedMovieIds.includes(movieId);
@@ -24,7 +51,27 @@ export function PassportProvider({ children }: PassportProviderProps) {
         ? prev.watchlistMovieIds
         : prev.watchlistMovieIds.filter((id) => id !== movieId);
 
-      return { ...prev, stampedMovieIds, watchlistMovieIds };
+      const currentMetadata = prev.moviesMetadata;
+
+      if (!exists && !currentMetadata[movieId]) {
+        // Obtenemos runtime en background para cálculo de horas
+        tmdbApi
+          .getMovieDetails(movieId)
+          .then((details) => {
+            if (details.runtime) {
+              setPassport((current) => ({
+                ...current,
+                moviesMetadata: {
+                  ...current.moviesMetadata,
+                  [movieId]: { runtime: details.runtime ?? 0 },
+                },
+              }));
+            }
+          })
+          .catch(console.error);
+      }
+
+      return { ...prev, stampedMovieIds, watchlistMovieIds, moviesMetadata: currentMetadata };
     });
   }, []);
 
@@ -39,6 +86,17 @@ export function PassportProvider({ children }: PassportProviderProps) {
     });
   }, []);
 
+  const toggleFavorite = useCallback((movieId: number) => {
+    setPassport((prev) => {
+      const exists = prev.favoriteMovieIds.includes(movieId);
+      const favoriteMovieIds = exists
+        ? prev.favoriteMovieIds.filter((id) => id !== movieId)
+        : [...prev.favoriteMovieIds, movieId];
+
+      return { ...prev, favoriteMovieIds };
+    });
+  }, []);
+
   const isStamped = useCallback(
     (movieId: number) => passport.stampedMovieIds.includes(movieId),
     [passport.stampedMovieIds],
@@ -49,14 +107,21 @@ export function PassportProvider({ children }: PassportProviderProps) {
     [passport.watchlistMovieIds],
   );
 
+  const isFavorite = useCallback(
+    (movieId: number) => passport.favoriteMovieIds.includes(movieId),
+    [passport.favoriteMovieIds],
+  );
+
   return (
     <PassportContext.Provider
       value={{
         passport,
         toggleStamp,
         toggleWatchlist,
+        toggleFavorite,
         isStamped,
         isWatchlisted,
+        isFavorite,
       }}
     >
       {children}

@@ -5,6 +5,7 @@ import { AsyncBoundary } from '@/presentation/components/layout/async-boundary';
 import { MovieCard } from '@/presentation/components/ui/movie-card';
 import { StampButton } from '@/presentation/components/ui/stamp-button';
 import { WatchlistButton } from '@/presentation/components/ui/watchlist-button';
+import { ManageDossiersButton } from '@/presentation/components/feature/ManageDossiersButton';
 import { getTmdbImageUrl } from '@/shared/utils/image-url';
 import type { TmdbMovieDetailsResponse, TmdbVideo } from '@/infrastructure/api/types';
 
@@ -89,18 +90,21 @@ function MovieDetailView({ movie }: { movie: TmdbMovieDetailsResponse }) {
   return (
     <article className="flex flex-col gap-12 pb-16">
       {/* ── 1. Cabecera Inmersiva ────────────────────────────────────────────── */}
-      <div className="relative w-full min-h-[420px] rounded-2xl overflow-hidden">
-        {/* Backdrop borroso como fondo */}
-        {movie.backdrop_path && (
-          <img
-            src={backdropUrl}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover scale-105 blur-sm opacity-40"
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-surface/80 via-transparent to-transparent" />
+      <div className="relative w-full min-h-[420px]">
+        {/* Capas de fondo (clipadas con overflow-hidden para respetar rounded-2xl) */}
+        <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+          {/* Backdrop borroso como fondo */}
+          {movie.backdrop_path && (
+            <img
+              src={backdropUrl}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover scale-105 blur-sm opacity-40"
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-surface/80 via-transparent to-transparent" />
+        </div>
 
         {/* Contenido sobre el fondo */}
         <div className="relative z-10 flex flex-col sm:flex-row gap-8 p-8 items-end h-full min-h-[420px]">
@@ -156,6 +160,7 @@ function MovieDetailView({ movie }: { movie: TmdbMovieDetailsResponse }) {
             <div className="flex flex-wrap gap-3 mt-2">
               <StampButton movieId={movie.id} size="lg" showLabel />
               <WatchlistButton movieId={movie.id} size="lg" showLabel />
+              <ManageDossiersButton movieId={movie.id} />
             </div>
           </div>
         </div>

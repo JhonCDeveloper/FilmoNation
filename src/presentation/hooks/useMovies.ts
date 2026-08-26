@@ -26,8 +26,9 @@ export const useTrendingMovies = (page = 1) => {
 };
 
 // 4. GET /discover/movie (Filtros: Copia que caduca a los 5 minutos)
-export const useDiscoverMovies = (params?: TmdbDiscoverParams) => {
+export const useDiscoverMovies = (params?: TmdbDiscoverParams, enabled = true) => {
   return useAppQuery(movieKeys.discover(params), () => tmdbApi.discoverMovies(params), {
+    enabled,
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 };

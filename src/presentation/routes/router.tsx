@@ -3,6 +3,7 @@ import { RootLayout } from './root-layout';
 import Home from '../pages/HomePage';
 import MovieDetailPage from '../pages/MovieDetailPage';
 import TerritoryPage from '../pages/TerritoryPage';
+import PassportPage from '../pages/PassportPage';
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ export const router = createBrowserRouter([
       {
         path: 'territorio',
         element: <TerritoryPage />,
+      },
+      {
+        path: 'pasaporte',
+        element: <PassportPage />,
       },
     ],
   },

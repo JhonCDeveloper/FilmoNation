@@ -1,5 +1,5 @@
-import { useState, useRef, type KeyboardEvent, type ChangeEvent } from 'react';
-import { useNavigate } from 'react-router';
+import { useState, useRef, useEffect, type KeyboardEvent, type ChangeEvent } from 'react';
+import { useNavigate, useLocation, useSearchParams } from 'react-router';
 import { Search, Loader2 } from 'lucide-react';
 import { useSearchMovies } from '@/presentation/hooks/useMovies';
 import { useDebounce } from '@/presentation/hooks/useDebounce';
@@ -9,13 +9,46 @@ import { fmtYear, fmtRating } from '@/shared/i18n/formatters';
 import { UI } from '@/shared/i18n/messages';
 
 export function HeaderSearch() {
-  const [query, setQuery] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const isTerritory = location.pathname === '/territorio';
+  const urlQuery = searchParams.get('q') ?? '';
+
+  // Estado local para input fluido (bidireccional con URL)
+  const [query, setQuery] = useState(urlQuery);
+
+  // 1. Sync URL -> Input (si el usuario recarga, navega atrás o usa los filtros)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setQuery(urlQuery);
+  }, [urlQuery]);
 
   const debouncedQuery = useDebounce(query, 350);
   const isSearchActive = debouncedQuery.trim().length >= 2;
+
+  // 2. Sync Input -> URL (Solo en territorio, reactivo)
+  useEffect(() => {
+    if (isTerritory && debouncedQuery !== urlQuery) {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (debouncedQuery.trim()) {
+            next.set('q', debouncedQuery.trim());
+          } else {
+            next.delete('q');
+          }
+          next.set('page', '1'); // Reiniciar paginación al buscar
+          return next;
+        },
+        { replace: true },
+      );
+    }
+  }, [debouncedQuery, isTerritory, urlQuery, setSearchParams]);
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const { data, isLoading } = useSearchMovies({
     query: debouncedQuery,
@@ -27,7 +60,7 @@ export function HeaderSearch() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
-    if (e.target.value.trim().length >= 2) {
+    if (!isTerritory && e.target.value.trim().length >= 2) {
       setIsOpen(true);
     } else {
       setIsOpen(false);
@@ -47,7 +80,7 @@ export function HeaderSearch() {
   };
 
   const handleFocus = () => {
-    if (query.trim().length >= 2) {
+    if (!isTerritory && query.trim().length >= 2) {
       setIsOpen(true);
     }
   };
@@ -64,7 +97,8 @@ export function HeaderSearch() {
   };
 
   const results = data?.results.slice(0, 5) ?? [];
-  const showDropdown = isOpen && isSearchActive;
+  // Supresión Condicional del Menú Desplegable en /territorio
+  const showDropdown = isOpen && isSearchActive && !isTerritory;
 
   return (
     <div ref={containerRef} className="relative w-full max-w-md mx-auto">

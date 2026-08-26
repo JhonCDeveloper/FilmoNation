@@ -3,6 +3,8 @@ import { localStorageService } from './local-storage';
 export interface UserPassportData {
   stampedMovieIds: number[]; // Películas vistas (Pasaporte sellado)
   watchlistMovieIds: number[]; // Visas pendientes (Por ver)
+  favoriteMovieIds: number[]; // Residencia Permanente (Favoritos)
+  moviesMetadata: Record<number, { runtime: number }>; // Metadatos para métricas
   updatedAt: string;
 }
 
@@ -13,12 +15,20 @@ const STORAGE_KEYS = {
 const DEFAULT_PASSPORT: UserPassportData = {
   stampedMovieIds: [],
   watchlistMovieIds: [],
+  favoriteMovieIds: [],
+  moviesMetadata: {},
   updatedAt: new Date().toISOString(),
 };
 
 export const passportStorage = {
   getPassport: (): UserPassportData => {
-    return localStorageService.get<UserPassportData>(STORAGE_KEYS.PASSPORT, DEFAULT_PASSPORT);
+    const data = localStorageService.get<UserPassportData>(STORAGE_KEYS.PASSPORT, DEFAULT_PASSPORT);
+    return {
+      ...DEFAULT_PASSPORT,
+      ...data,
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      favoriteMovieIds: data.favoriteMovieIds ?? [],
+    };
   },
 
   savePassport: (data: UserPassportData): void => {
