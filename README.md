@@ -1,7 +1,7 @@
 # 🎬 FilmoNation
 
 [![Deploy on Vercel](https://img.shields.io/badge/Deploy-Vercel-black?style=for-the-badge&logo=vercel)](https://filmonation.vercel.app/)
-&nbsp;&nbsp;[**🚀 Ver Aplicación en Vivo**](https://filmonation.vercel.app/)
+&nbsp;&nbsp;[**🚀 Ver Aplicación**](https://filmonation.vercel.app/)
 
 ![FilmoNation UI](./public/screenshot.png)
 
