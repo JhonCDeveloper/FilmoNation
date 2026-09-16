@@ -1,10 +1,15 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
+  plugins: [react()],
+  resolve: {
+    tsconfigPaths: true,
+  },
   test: {
+    env: {
+      VITE_TMDB_READ_TOKEN: 'fake_test_token_that_is_at_least_forty_chars_long',
+    },
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
