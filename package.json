@@ -6,6 +6,11 @@
   "engines": {
     "node": ">=22"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "msw"
+    ]
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
