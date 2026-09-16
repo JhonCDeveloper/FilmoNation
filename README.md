@@ -1,4 +1,6 @@
-﻿# 🎬 FilmoNation
+# 🎬 FilmoNation
+
+![FilmoNation UI](./public/screenshot.png)
 
 Plataforma de grado profesional diseñada para explorar, gestionar y sellar tu pasaporte cinematográfico mediante una arquitectura escalable, accesible e internacionalizada.
 
